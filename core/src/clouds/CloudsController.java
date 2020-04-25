@@ -74,9 +74,11 @@ public class CloudsController {
                 if(controlX == 0){
                     tempX = randomBetweenNumbers(maxX - 40, maxX);
                     controlX = 1;
+                    c.setDrawLeft(false); // Set clouds on the right side
                 } else if(controlX == 1){
                     tempX = randomBetweenNumbers(minX + 40, minX);
                     controlX = 0;
+                    c.setDrawLeft(true); // Set clouds on the left side
                 }
 
                 c.setSpritePosition(tempX, positionY);
@@ -89,7 +91,11 @@ public class CloudsController {
 
     public void drawClouds(SpriteBatch batch){
         for(Cloud c : clouds){
-            batch.draw(c, c.getX() - c.getWidth() / 2f, c.getY() - c.getHeight() / 2f);
+            if(c.getDrawLeft()){
+                batch.draw(c, c.getX() - c.getWidth() / 2f - 20, c.getY() - c.getHeight() / 2f);
+            } else {
+                batch.draw(c, c.getX() - c.getWidth() / 2f + 10, c.getY() - c.getHeight() / 2f);
+            }
         }
     }
 
