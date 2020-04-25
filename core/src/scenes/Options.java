@@ -10,10 +10,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ghevi.jackthegiant.GameMain;
 
 import helpers.GameInfo;
-import huds.MainMenuButtons;
+import huds.OptionsButtons;
 
-
-public class MainMenu implements Screen {
+public class Options implements Screen {
 
     private GameMain game;
 
@@ -22,21 +21,21 @@ public class MainMenu implements Screen {
 
     private Texture bg;
 
-    private MainMenuButtons btns;
+    private OptionsButtons btns;
 
-    public MainMenu(GameMain game){
+    public Options(GameMain game){
         this.game = game;
 
-        mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
+        mainCamera = new OrthographicCamera();
+        mainCamera.setToOrtho(false, GameInfo.WIDTH, GameInfo.HEIGHT);
         mainCamera.position.set(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f, 0);
 
         gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT, mainCamera);
 
-        bg = new Texture("Backgrounds/Menu BG.png");
+        bg = new Texture("Backgrounds/Options BG.png");
 
-        btns = new MainMenuButtons(game);
+        btns = new OptionsButtons(game);
     }
-
 
     @Override
     public void show() {
@@ -81,4 +80,48 @@ public class MainMenu implements Screen {
         bg.dispose();
         btns.getStage().dispose();
     }
-} // main menu
+} // options
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -25,7 +25,7 @@ public class Cloud extends Sprite {
         this.cloudName = cloudName;
     }
 
-    void createBody(){
+    private void createBody(){
         BodyDef bodyDef = new BodyDef(); // The cloud image itself
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set((getX() - 45) / GameInfo.PPM, getY() / GameInfo.PPM);

@@ -1,11 +1,13 @@
 package huds;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -13,6 +15,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ghevi.jackthegiant.GameMain;
 
 import helpers.GameInfo;
+import scenes.Gameplay;
+import scenes.Highscore;
+import scenes.Options;
 
 public class MainMenuButtons {
 
@@ -29,11 +34,15 @@ public class MainMenuButtons {
     public MainMenuButtons(GameMain game){
         this.game = game;
 
+        // The menu needs a fitViewport (it doesnt stretch like the gameplay) and a stage, which is like a Screen
         gameViewport = new FitViewport(GameInfo.WIDTH, GameInfo.HEIGHT, new OrthographicCamera());
-
         stage = new Stage(gameViewport, game.getBatch());
 
+        // Sets this stage to be the input processor for the buttons
+        Gdx.input.setInputProcessor(stage);
+
         createAndPositionButtons();
+        addAllListeners();
         addActors();
     }
 
@@ -49,6 +58,46 @@ public class MainMenuButtons {
         optionsBtn.setPosition(GameInfo.WIDTH / 2 - 40, GameInfo.HEIGHT / 2 - 90, Align.center);
         quitBtn.setPosition(GameInfo.WIDTH / 2 - 20, GameInfo.HEIGHT / 2 - 160, Align.center);
         musicBtn.setPosition(GameInfo.WIDTH - 13, 13, Align.bottomRight);
+    }
+
+    private void addAllListeners(){
+        playBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Any code here will be executed when we press the play button
+                game.setScreen(new Gameplay(game));
+            }
+        });
+
+        highscoreBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new Highscore(game));
+            }
+        });
+
+        optionsBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new Options(game));
+            }
+        });
+
+        quitBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+
+            }
+        });
+
+        musicBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+
+            }
+        });
     }
 
     private void addActors(){

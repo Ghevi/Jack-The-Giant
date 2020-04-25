@@ -38,7 +38,7 @@ public class Player extends Sprite {
         playerAtlas = new TextureAtlas("Player Animation/Player Animation.atlas");
     }
 
-    void createBody(){
+    private void createBody(){
         BodyDef bodyDef = new BodyDef(); // The player image itself
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(getX() / GameInfo.PPM, getY() / GameInfo.PPM);

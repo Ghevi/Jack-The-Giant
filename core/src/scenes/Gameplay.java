@@ -43,7 +43,7 @@ public class Gameplay implements Screen {
         this.game = game;
 
         mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
-        mainCamera.position.set(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2, 0);
+        mainCamera.position.set(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f, 0);
 
         gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT, mainCamera);
 
@@ -62,7 +62,7 @@ public class Gameplay implements Screen {
         createBackgrounds();
     }
 
-    void handleInput(float dt){
+    private void handleInput(float dt){
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
             player.movePlayer(-2);
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
@@ -73,7 +73,7 @@ public class Gameplay implements Screen {
 
     }
 
-    void update(float dt){
+    private void update(float dt){
         handleInput(dt);
         //moveCamera();
         checkBackgroundsOutOfBounds();
@@ -81,11 +81,11 @@ public class Gameplay implements Screen {
         cloudsController.createAndArrangeNewClouds();
     }
 
-    void moveCamera(){
+    private void moveCamera(){
         mainCamera.position.y -= 1.5f;
     }
 
-    void createBackgrounds(){
+    private void createBackgrounds(){
         bgs = new Sprite[3];
 
         for(int i = 0; i < bgs.length; i++){
@@ -95,13 +95,13 @@ public class Gameplay implements Screen {
         }
     }
 
-    void drawBackgrounds(){
+    private void drawBackgrounds(){
         for (Sprite bg : bgs) {
             game.getBatch().draw(bg, bg.getX(), bg.getY());
         }
     }
 
-    void checkBackgroundsOutOfBounds(){
+    private void checkBackgroundsOutOfBounds(){
         for(int i = 0; i < bgs.length; i++){
             if((bgs[i].getY() - bgs[i].getHeight() / 2f - 5) > mainCamera.position.y){
                 float newPosition = bgs[i].getHeight() + lastYPosition;
@@ -142,7 +142,7 @@ public class Gameplay implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        gameViewport.update(width, height);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class CloudsController {
         positionClouds(true);
     }
 
-    void createClouds() {  // Creates 2 dark clouds and 6 normal clouds
+    private void createClouds() {  // Creates 2 dark clouds and 6 normal clouds
         for(int i = 0; i < 2; i++){
             clouds.add(new Cloud(world, "Dark Cloud"));
         }
