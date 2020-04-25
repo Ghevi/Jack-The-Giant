@@ -18,6 +18,7 @@ import com.ghevi.jackthegiant.GameMain;
 import clouds.Cloud;
 import clouds.CloudsController;
 import helpers.GameInfo;
+import huds.UIHud;
 import player.Player;
 
 public class Gameplay implements Screen {
@@ -34,6 +35,8 @@ public class Gameplay implements Screen {
 
     private Sprite[] bgs;
     private float lastYPosition;
+
+    private UIHud hud;
 
     private CloudsController cloudsController;
 
@@ -52,6 +55,8 @@ public class Gameplay implements Screen {
         box2DCamera.position.set(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f, 0);
 
         debugRenderer = new Box2DDebugRenderer();
+
+        hud = new UIHud(game);
 
         world = new World(new Vector2(0, -9.8f), true); // Set the gravity, no calculations will be made on sleeping bodies to save performances.
 
@@ -134,6 +139,9 @@ public class Gameplay implements Screen {
 
         game.getBatch().setProjectionMatrix(mainCamera.combined);
         mainCamera.update();
+
+        game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
+        hud.getStage().draw();
 
         player.updatePlayer();
 

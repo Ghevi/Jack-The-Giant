@@ -118,7 +118,7 @@ public class CloudsController {
     }
 
     public Player positionThePlayer(Player player){
-        player = new Player(world, clouds.get(0).getX(), clouds.get(0).getY() + 100);
+        player = new Player(world, clouds.get(0).getX(), clouds.get(0).getY() + 78);
         return player;
     }
 
