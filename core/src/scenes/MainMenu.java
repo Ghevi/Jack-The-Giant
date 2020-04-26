@@ -35,6 +35,7 @@ public class MainMenu implements Screen {
         bg = new Texture("Backgrounds/Menu BG.png");
 
         btns = new MainMenuButtons(game);
+
     }
 
 

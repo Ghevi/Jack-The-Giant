@@ -1,6 +1,5 @@
 package huds;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ghevi.jackthegiant.GameMain;
 
 import helpers.GameInfo;
+import helpers.GameManager;
 import scenes.MainMenu;
 
 public class UIHud {
@@ -45,10 +45,27 @@ public class UIHud {
 
         Gdx.input.setInputProcessor(stage);
 
+        setInitialUIHudValues();
+
         createLabels();
         createImages();
         createBtnAndAddListener();
 
+        createTablesAndAddActors();
+    }
+
+    private void setInitialUIHudValues(){
+        if(GameManager.getInstance().gameStartedFromMainMenu){
+            // this is the first time starting the game, set initial values
+            GameManager.getInstance().gameStartedFromMainMenu = false;
+
+            GameManager.getInstance().lifeScore = 2;
+            GameManager.getInstance().coinScore = 0;
+            GameManager.getInstance().score = 0;
+        }
+    }
+
+    private void createTablesAndAddActors(){
         Table lifeAndCoinTable = new Table();
         lifeAndCoinTable.top().left();
         lifeAndCoinTable.setFillParent(true);
@@ -82,14 +99,14 @@ public class UIHud {
 
         BitmapFont font = generator.generateFont(parameter);
 
-        coinLabel = new Label("x0", new Label.LabelStyle(font, Color.WHITE));
-        lifeLabel = new Label("x2", new Label.LabelStyle(font, Color.WHITE));
-        scoreLabel = new Label("100", new Label.LabelStyle(font, Color.WHITE));
+        coinLabel = new Label("x" + GameManager.getInstance().coinScore, new Label.LabelStyle(font, Color.WHITE));
+        lifeLabel = new Label("x" + GameManager.getInstance().lifeScore, new Label.LabelStyle(font, Color.WHITE));
+        scoreLabel = new Label(String.valueOf( GameManager.getInstance().score), new Label.LabelStyle(font, Color.WHITE));
     }
 
     private void createImages(){
-        coinImg = new Image(new Texture("Collectables/Coin.png"));
-        lifeImg = new Image(new Texture("Collectables/Life.png"));
+        coinImg = new Image(new Texture("collectables/Coin.png"));
+        lifeImg = new Image(new Texture("collectables/Life.png"));
         scoreImg = new Image(new Texture("Buttons/Gameplay/Score.png"));
     }
 
@@ -101,8 +118,10 @@ public class UIHud {
         pauseBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // Pause the game
-                createPausePanel();
+                if(!GameManager.getInstance().isPaused) {
+                    GameManager.getInstance().isPaused = true;
+                    createPausePanel();
+                }
             }
         });
     }
@@ -120,6 +139,7 @@ public class UIHud {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 removePausePanel();
+                GameManager.getInstance().isPaused = false;
             }
         });
 
@@ -139,6 +159,23 @@ public class UIHud {
         pausePanel.remove();
         resumeBtn.remove();
         quitBtn.remove();
+    }
+
+    public void incrementScore(int score){
+        GameManager.getInstance().score = score;
+        scoreLabel.setText(String.valueOf(GameManager.getInstance().score));
+    }
+
+    public void incrementCoins(){
+        GameManager.getInstance().coinScore++;
+        coinLabel.setText("x" + GameManager.getInstance().coinScore);
+        incrementScore(200);
+    }
+
+    public void incrementLifes(){
+        GameManager.getInstance().lifeScore++;
+        lifeLabel.setText("x" + GameManager.getInstance().lifeScore);
+        incrementScore(300);
     }
 
     public Stage getStage() {

@@ -46,15 +46,18 @@ public class Player extends Sprite {
         body = world.createBody(bodyDef);
         body.setFixedRotation(true);
 
-        PolygonShape shape = new PolygonShape(); // The "hit-box" around the player for collision detection
+        PolygonShape shape = new PolygonShape(); // The "hit-box" around the player for collisions detection
         shape.setAsBox((getWidth() / 2f - 20) / GameInfo.PPM, (getHeight() / 2f) / GameInfo.PPM);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 4f;  // Mass of the body
-        fixtureDef.friction = 2f;   // Will make player not slide on surfaces
         fixtureDef.shape = shape;
+        fixtureDef.density = 0f;  // Mass of the body
+        fixtureDef.friction = 2f;   // Will make player not slide on surfaces
+        fixtureDef.filter.categoryBits = GameInfo.PLAYER; // Set this body to be of player category
+        fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE; // Define which category of object can this body collide with
 
         Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData("Player");
 
         shape.dispose();
     }

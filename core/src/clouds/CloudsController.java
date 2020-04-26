@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Arrays;
 import java.util.Random;
 
+import collectables.Collectable;
 import helpers.GameInfo;
 import player.Player;
 
@@ -15,14 +16,15 @@ public class CloudsController {
 
     private World world;
 
+    private Array<Cloud> clouds = new Array<>();
+    private Array<Collectable> collectables  = new Array<Collectable>();
+
     private final float DISTANCE_BETWEEN_CLOUDS = 250f;
     private float minX, maxX;
     private float lastCloudPositionY;
     private float cameraY;
 
     private Random random = new Random();
-
-    private Array<Cloud> clouds = new Array<Cloud>();
 
     public CloudsController(World world){
         this.world = world;
@@ -85,8 +87,33 @@ public class CloudsController {
 
                 positionY -= DISTANCE_BETWEEN_CLOUDS;
                 lastCloudPositionY =  positionY;
+
+                if(!firstTimeArranging && c.getCloudName() != "Dark Cloud"){
+                    int rand = random.nextInt(10);
+
+                    if(rand > 5){
+                        int randomCollectable = random.nextInt(2);
+
+                        if(randomCollectable == 0){
+                            // spawn a life, if the life count is lower than 2
+
+                            Collectable collectable = new Collectable(world, "Life");
+                            collectable.setCollectablePosition(c.getX(), c.getY() + 40);
+                            collectables.add(collectable);
+                        } else {
+                            // spawn a coin
+                            Collectable collectable = new Collectable(world, "Coin");
+                            collectable.setCollectablePosition(c.getX(), c.getY() + 40);
+                            collectables.add(collectable);
+                        }
+                    }
+                }
             }
         }
+          // For testing purposes: This will put a collectable item on the first cloud
+//        Collectable collectable = new Collectable(world, "Life" /*, "Coin" */);
+//        collectable.setCollectablePosition(clouds.get(1).getX(), clouds.get(1).getY() + 40);
+//        collectables.add(collectable);
     }
 
     public void drawClouds(SpriteBatch batch){
@@ -95,6 +122,23 @@ public class CloudsController {
                 batch.draw(c, c.getX() - c.getWidth() / 2f - 20, c.getY() - c.getHeight() / 2f);
             } else {
                 batch.draw(c, c.getX() - c.getWidth() / 2f + 10, c.getY() - c.getHeight() / 2f);
+            }
+        }
+    }
+
+    public void drawCollectables(SpriteBatch batch){
+        for(Collectable c : collectables){
+            c.updateCollectable();
+            batch.draw(c, c.getX(), c.getY());
+        }
+    }
+
+    public void removeCollectables(){
+        for(int i = 0; i < collectables.size; i++){
+            if(collectables.get(i).getFixture().getUserData() == "Remove"){
+                collectables.get(i).changeFilter();
+                collectables.get(i).getTexture().dispose();
+                collectables.removeIndex(i);
             }
         }
     }
@@ -110,6 +154,15 @@ public class CloudsController {
         if(clouds.size == 4){
             createClouds();
             positionClouds(false);
+        }
+    }
+
+    public void removeOffScreenCollectables(){
+        for(int i = 0; i < collectables.size; i++){
+            if((collectables.get(i).getY() - GameInfo.HEIGHT / 2f - 15) > cameraY){
+                collectables.get(i).getTexture().dispose();
+                collectables.removeIndex(i);
+            }
         }
     }
 

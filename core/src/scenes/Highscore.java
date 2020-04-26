@@ -36,6 +36,7 @@ public class Highscore implements Screen {
         bg = new Texture("Backgrounds/Highscore BG.png");
 
         btns = new HighscoreButtons(game);
+
     }
 
     @Override

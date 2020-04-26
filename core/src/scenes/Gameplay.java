@@ -10,6 +10,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -18,10 +23,11 @@ import com.ghevi.jackthegiant.GameMain;
 import clouds.Cloud;
 import clouds.CloudsController;
 import helpers.GameInfo;
+import helpers.GameManager;
 import huds.UIHud;
 import player.Player;
 
-public class Gameplay implements Screen {
+public class Gameplay implements Screen, ContactListener {
 
     private GameMain game;
 
@@ -35,6 +41,8 @@ public class Gameplay implements Screen {
 
     private Sprite[] bgs;
     private float lastYPosition;
+
+    private boolean touchedForTheFirstTime = false;
 
     private UIHud hud;
 
@@ -59,6 +67,7 @@ public class Gameplay implements Screen {
         hud = new UIHud(game);
 
         world = new World(new Vector2(0, -9.8f), true); // Set the gravity, no calculations will be made on sleeping bodies to save performances.
+        world.setContactListener(this);
 
         cloudsController = new CloudsController(world);
 
@@ -78,12 +87,26 @@ public class Gameplay implements Screen {
 
     }
 
+    private void checkForFirstTouch(){
+        if(!touchedForTheFirstTime){
+            if(Gdx.input.justTouched()){
+                touchedForTheFirstTime = true;
+                GameManager.getInstance().isPaused = false;
+            }
+        }
+    }
+
     private void update(float dt){
-        handleInput(dt);
-        //moveCamera();
-        checkBackgroundsOutOfBounds();
-        cloudsController.setCameraY(mainCamera.position.y);
-        cloudsController.createAndArrangeNewClouds();
+        checkForFirstTouch();
+
+        if(!GameManager.getInstance().isPaused){
+            handleInput(dt);
+            moveCamera();
+            checkBackgroundsOutOfBounds();
+            cloudsController.setCameraY(mainCamera.position.y);
+            cloudsController.createAndArrangeNewClouds();
+            cloudsController.removeOffScreenCollectables();
+        }
     }
 
     private void moveCamera(){
@@ -129,19 +152,24 @@ public class Gameplay implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.getBatch().begin();
+
         drawBackgrounds();
+
         cloudsController.drawClouds(game.getBatch());
+        cloudsController.drawCollectables(game.getBatch());
+
         player.drawPlayerIdle(game.getBatch());
         player.drawPlayerAnimation(game.getBatch());
+
         game.getBatch().end();
 
         debugRenderer.render(world, box2DCamera.combined); // Draws the hit-boxes
 
-        game.getBatch().setProjectionMatrix(mainCamera.combined);
-        mainCamera.update();
-
         game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
         hud.getStage().draw();
+
+        game.getBatch().setProjectionMatrix(mainCamera.combined);
+        mainCamera.update();
 
         player.updatePlayer();
 
@@ -176,5 +204,47 @@ public class Gameplay implements Screen {
         }
         player.getTexture().dispose();
         debugRenderer.dispose();
+    }
+
+    @Override
+    public void beginContact(Contact contact) {
+        Fixture body1, body2; // body1 is always the player
+
+        if(contact.getFixtureA().getUserData() == "Player"){
+            body1 = contact.getFixtureA();
+            body2 = contact.getFixtureB();
+        } else{
+            body1 = contact.getFixtureB();
+            body2 = contact.getFixtureA();
+        }
+
+        if(body1.getUserData() == "Player" && body2.getUserData() == "Coin"){
+            // collided with the coin
+            hud.incrementCoins();
+            body2.setUserData("Remove");
+            cloudsController.removeCollectables();
+        }
+
+        if(body1.getUserData() == "Player" && body2.getUserData() == "Life"){
+            // collided with the life
+            hud.incrementLifes();
+            body2.setUserData("Remove");
+            cloudsController.removeCollectables();
+        }
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+
+    }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+
     }
 } // gameplay
