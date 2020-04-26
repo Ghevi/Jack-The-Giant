@@ -49,6 +49,7 @@ public class Gameplay implements Screen, ContactListener {
     private CloudsController cloudsController;
 
     private Player player;
+    private float lastPlayerY;
 
     public Gameplay(GameMain game){
         this.game = game;
@@ -92,6 +93,7 @@ public class Gameplay implements Screen, ContactListener {
             if(Gdx.input.justTouched()){
                 touchedForTheFirstTime = true;
                 GameManager.getInstance().isPaused = false;
+                lastPlayerY = player.getY();
             }
         }
     }
@@ -106,6 +108,8 @@ public class Gameplay implements Screen, ContactListener {
             cloudsController.setCameraY(mainCamera.position.y);
             cloudsController.createAndArrangeNewClouds();
             cloudsController.removeOffScreenCollectables();
+            checkPlayersBounds();
+            countScore();
         }
     }
 
@@ -139,6 +143,30 @@ public class Gameplay implements Screen, ContactListener {
         }
     }
 
+    private void checkPlayersBounds(){
+        // Player is out of upper bound and the game stops
+        if((player.getY() - GameInfo.HEIGHT / 2f - player.getHeight() / 2f) >  mainCamera.position.y){
+            GameManager.getInstance().isPaused = true;
+        }
+
+        // Player is out of lower bound and the game stops
+        if((player.getY() + GameInfo.HEIGHT / 2f + player.getHeight() / 2f) <  mainCamera.position.y){
+            GameManager.getInstance().isPaused = true;
+        }
+
+        // Player is out of the lateral bounds
+        if(player.getX() - 30 > GameInfo.WIDTH || player.getX() + 80 < 0) {
+            GameManager.getInstance().isPaused = true;
+        }
+    }
+
+    private void countScore(){
+        if(lastPlayerY > player.getY()){
+            hud.incrementScore(1);
+            lastPlayerY = player.getY();
+        }
+    }
+
     @Override
     public void show() {
 
@@ -163,7 +191,7 @@ public class Gameplay implements Screen, ContactListener {
 
         game.getBatch().end();
 
-        debugRenderer.render(world, box2DCamera.combined); // Draws the hit-boxes
+        // debugRenderer.render(world, box2DCamera.combined); // Draws the hit-boxes
 
         game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
         hud.getStage().draw();
