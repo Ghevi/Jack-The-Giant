@@ -1,35 +1,40 @@
 package clouds;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import collectables.Collectable;
 import helpers.GameInfo;
+import helpers.GameManager;
 import player.Player;
 
 public class CloudsController {
 
     private World world;
 
-    private Array<Cloud> clouds = new Array<>();
-    private Array<Collectable> collectables  = new Array<Collectable>();
+    private Array<Cloud> clouds;
+    private Array<Collectable> collectables;
 
     private final float DISTANCE_BETWEEN_CLOUDS = 250f;
     private float minX, maxX;
     private float lastCloudPositionY;
     private float cameraY;
 
-    private Random random = new Random();
+    private Random random;
 
     public CloudsController(World world){
         this.world = world;
+        clouds = new Array<>();
+        collectables  = new Array<Collectable>();
+
+        random = new Random();
+
         minX = GameInfo.WIDTH / 2f - 120;
         maxX = GameInfo.WIDTH / 2f + 120;
+
         createClouds();
         positionClouds(true);
     }
@@ -96,10 +101,16 @@ public class CloudsController {
 
                         if(randomCollectable == 0){
                             // spawn a life, if the life count is lower than 2
-
-                            Collectable collectable = new Collectable(world, "Life");
-                            collectable.setCollectablePosition(c.getX(), c.getY() + 40);
-                            collectables.add(collectable);
+                            if(GameManager.getInstance().lifeScore < 2){
+                                Collectable collectable = new Collectable(world, "Life");
+                                collectable.setCollectablePosition(c.getX(), c.getY() + 40);
+                                collectables.add(collectable);
+                            } else {
+                                // spawn a coin
+                                Collectable collectable = new Collectable(world, "Coin");
+                                collectable.setCollectablePosition(c.getX(), c.getY() + 40);
+                                collectables.add(collectable);
+                            }
                         } else {
                             // spawn a coin
                             Collectable collectable = new Collectable(world, "Coin");

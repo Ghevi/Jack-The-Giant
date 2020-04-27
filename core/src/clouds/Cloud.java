@@ -25,6 +25,12 @@ public class Cloud extends Sprite {
         this.cloudName = cloudName;
     }
 
+
+    public void setSpritePosition(float x, float y){
+        setPosition(x, y);
+        createBody();
+    }
+
     private void createBody(){
         BodyDef bodyDef = new BodyDef(); // The cloud image itself
         bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -40,11 +46,6 @@ public class Cloud extends Sprite {
         fixture.setUserData(cloudName);
 
         shape.dispose();
-    }
-
-    public void setSpritePosition(float x, float y){
-        setPosition(x, y);
-        createBody();
     }
 
     public String getCloudName(){

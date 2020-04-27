@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,6 +47,10 @@ public class Gameplay implements Screen, ContactListener {
     private Sprite[] bgs;
     private float lastYPosition;
 
+    private float cameraSpeed = 10;
+    private float maxSpeed = 10;
+    private float acceleration = 10;
+
     private boolean touchedForTheFirstTime;
 
     private UIHud hud;
@@ -54,6 +59,8 @@ public class Gameplay implements Screen, ContactListener {
 
     private Player player;
     private float lastPlayerY;
+
+    private Sound coinSound, lifeSound;
 
     public Gameplay(GameMain game){
         this.game = game;
@@ -79,6 +86,10 @@ public class Gameplay implements Screen, ContactListener {
         player = cloudsController.positionThePlayer(player);
 
         createBackgrounds();
+        setCameraSpeed();
+
+        coinSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Coin Sound.wav"));
+        lifeSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/Life Sound.wav"));
     }
 
     private void createBackgrounds(){
@@ -96,7 +107,7 @@ public class Gameplay implements Screen, ContactListener {
 
         if(!GameManager.getInstance().isPaused){
             handleInput(dt);
-            moveCamera();
+            moveCamera(dt);
             checkBackgroundsOutOfBounds();
             cloudsController.setCameraY(mainCamera.position.y);
             cloudsController.createAndArrangeNewClouds();
@@ -127,8 +138,30 @@ public class Gameplay implements Screen, ContactListener {
 
     }
 
-    private void moveCamera(){
-        mainCamera.position.y -= 1.5f;
+    private void moveCamera(float delta){
+        mainCamera.position.y -= cameraSpeed * delta;
+        cameraSpeed += acceleration * delta;
+
+        if(cameraSpeed > maxSpeed){
+            cameraSpeed = maxSpeed;
+        }
+    }
+
+    private void setCameraSpeed(){
+        if(GameManager.getInstance().gameData.isEasyDifficulty()){
+            cameraSpeed = 80;
+            maxSpeed = 100;
+        }
+
+        if(GameManager.getInstance().gameData.isMediumDifficulty()){
+            cameraSpeed = 100;
+            maxSpeed = 120;
+        }
+
+        if(GameManager.getInstance().gameData.isHardDifficulty()){
+            cameraSpeed = 120;
+            maxSpeed = 140;
+        }
     }
 
     private void checkBackgroundsOutOfBounds(){
@@ -178,14 +211,15 @@ public class Gameplay implements Screen, ContactListener {
             // player has no more lifes left and the game stop
 
             // check if we have a new highscore
+            GameManager.getInstance().checkForNewHighscores();
 
             // show the end score to the player
+            hud.createGameOverPanel();
 
             // load main menu (Custom Action)
             loadMainMenuWithDelayAndFade(2f);
 
         } else {
-
             // reload the game so the player can continue to play
             startGameWithDelayAndFade(1f);
         }
@@ -284,6 +318,8 @@ public class Gameplay implements Screen, ContactListener {
         }
         player.getTexture().dispose();
         debugRenderer.dispose();
+        coinSound.dispose();
+        lifeSound.dispose();
     }
 
     @Override
@@ -301,6 +337,7 @@ public class Gameplay implements Screen, ContactListener {
         if(body1.getUserData() == "Player" && body2.getUserData() == "Coin"){
             // collided with the coin
             hud.incrementCoins();
+            coinSound.play();
             body2.setUserData("Remove");
             cloudsController.removeCollectables();
         }
@@ -308,6 +345,7 @@ public class Gameplay implements Screen, ContactListener {
         if(body1.getUserData() == "Player" && body2.getUserData() == "Life"){
             // collided with the life
             hud.incrementLifes();
+            lifeSound.play();
             body2.setUserData("Remove");
             cloudsController.removeCollectables();
         }

@@ -25,6 +25,12 @@ public class Collectable extends Sprite {
         this.name = name;
     }
 
+
+    public void setCollectablePosition(float x, float y){
+        setPosition(x, y);
+        createCollectableBody();
+    }
+
     private void createCollectableBody(){
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -44,11 +50,6 @@ public class Collectable extends Sprite {
         fixture.setUserData(name);
 
         shape.dispose();
-    }
-
-    public void setCollectablePosition(float x, float y){
-        setPosition(x, y);
-        createCollectableBody();
     }
 
     public void updateCollectable(){
