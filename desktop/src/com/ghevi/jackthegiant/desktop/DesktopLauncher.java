@@ -13,6 +13,8 @@ public class DesktopLauncher {
 		config.width = GameInfo.WIDTH;
 		config.height = GameInfo.HEIGHT;
 
+		config.forceExit = true;
+
 		new LwjglApplication(new GameMain(), config);
 	}
 }

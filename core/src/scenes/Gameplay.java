@@ -106,7 +106,8 @@ public class Gameplay implements Screen, ContactListener {
         checkForFirstTouch();
 
         if(!GameManager.getInstance().isPaused){
-            handleInput(dt);
+            handleInput();
+            handleInputAndroid();
             moveCamera(dt);
             checkBackgroundsOutOfBounds();
             cloudsController.setCameraY(mainCamera.position.y);
@@ -127,15 +128,30 @@ public class Gameplay implements Screen, ContactListener {
         }
     }
 
-    private void handleInput(float dt){
+    private void handleInput(){
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-            player.movePlayer(-2);
+            player.movePlayer(-2f);
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-            player.movePlayer(2);
+            player.movePlayer(2f);
         } else {
             player.setWalking(false);
         }
 
+    }
+
+    private void handleInputAndroid(){
+        if(Gdx.input.isTouched()){
+            // Check if touched on right side of the screen
+            if(Gdx.input.getX() > GameInfo.WIDTH / 2){
+                player.movePlayer(2f);
+            }
+            // Touched on the left side of the screen
+            else {
+                player.movePlayer(-2f);
+            }
+        } else {
+            player.setWalking(false);
+        }
     }
 
     private void moveCamera(float delta){

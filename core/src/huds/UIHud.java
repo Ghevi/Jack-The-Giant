@@ -80,8 +80,8 @@ public class UIHud {
     }
 
     private void createImages(){
-        coinImg = new Image(new Texture("collectables/Coin.png"));
-        lifeImg = new Image(new Texture("collectables/Life.png"));
+        coinImg = new Image(new Texture("Collectables/Coin.png"));
+        lifeImg = new Image(new Texture("Collectables/Life.png"));
         scoreImg = new Image(new Texture("Buttons/Gameplay/Score.png"));
     }
 

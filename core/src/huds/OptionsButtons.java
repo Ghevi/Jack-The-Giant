@@ -47,7 +47,7 @@ public class OptionsButtons {
         mediumBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Options Menu/Medium.png"))));
         hardBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Options Menu/Hard.png"))));
         backBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Options Menu/Back.png"))));
-        sign = new Image(new Texture("Buttons/Options Menu/Check sign.png"));
+        sign = new Image(new Texture("Buttons/Options Menu/Check Sign.png"));
 
         easyBtn.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 + 40, Align.center);
         mediumBtn.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 - 40, Align.center);
