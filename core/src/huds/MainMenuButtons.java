@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -14,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ghevi.jackthegiant.GameMain;
 
+import actions.DelayAndFadeAction;
 import helpers.GameInfo;
 import helpers.GameManager;
 import scenes.Gameplay;
@@ -67,7 +71,10 @@ public class MainMenuButtons {
             public void changed(ChangeEvent event, Actor actor) {
                 // Any code here will be executed when we press the play button
                 GameManager.getInstance().gameStartedFromMainMenu = true;
-                game.setScreen(new Gameplay(game));
+
+                // Custom action
+                startGameWithDelayAndFade(0.5f);
+
             }
         });
 
@@ -100,6 +107,13 @@ public class MainMenuButtons {
 
             }
         });
+    }
+
+    private void startGameWithDelayAndFade(float delay){
+        DelayAndFadeAction dfAction = new DelayAndFadeAction(game, stage);
+
+        dfAction.createCustomAction("Gameplay");
+        dfAction.addActionsSequenceToStage(delay);
     }
 
     private void addActors(){

@@ -65,31 +65,6 @@ public class UIHud {
         }
     }
 
-    private void createTablesAndAddActors(){
-        Table lifeAndCoinTable = new Table();
-        lifeAndCoinTable.top().left();
-        lifeAndCoinTable.setFillParent(true);
-
-        lifeAndCoinTable.add(lifeImg).padLeft(10).padTop(10);
-        lifeAndCoinTable.add(lifeLabel).padLeft(5);
-        lifeAndCoinTable.row();
-
-        lifeAndCoinTable.add(coinImg).padLeft(10).padTop(10);
-        lifeAndCoinTable.add(coinLabel).padLeft(5);
-
-        Table scoreTable = new Table();
-        scoreTable.top().right();
-        scoreTable.setFillParent(true);
-
-        scoreTable.add(scoreImg).padRight(10).padTop(10);
-        scoreTable.row();
-        scoreTable.add(scoreLabel).padRight(20).padTop(15);
-
-        stage.addActor(lifeAndCoinTable);
-        stage.addActor(scoreTable);
-        stage.addActor(pauseBtn);
-    }
-
     private void createLabels(){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/blow.ttf"));
 
@@ -124,6 +99,31 @@ public class UIHud {
                 }
             }
         });
+    }
+
+    private void createTablesAndAddActors(){
+        Table lifeAndCoinTable = new Table();
+        lifeAndCoinTable.top().left();
+        lifeAndCoinTable.setFillParent(true);
+
+        lifeAndCoinTable.add(lifeImg).padLeft(10).padTop(10);
+        lifeAndCoinTable.add(lifeLabel).padLeft(5);
+        lifeAndCoinTable.row();
+
+        lifeAndCoinTable.add(coinImg).padLeft(10).padTop(10);
+        lifeAndCoinTable.add(coinLabel).padLeft(5);
+
+        Table scoreTable = new Table();
+        scoreTable.top().right();
+        scoreTable.setFillParent(true);
+
+        scoreTable.add(scoreImg).padRight(10).padTop(10);
+        scoreTable.row();
+        scoreTable.add(scoreLabel).padRight(20).padTop(15);
+
+        stage.addActor(lifeAndCoinTable);
+        stage.addActor(scoreTable);
+        stage.addActor(pauseBtn);
     }
 
     private void createPausePanel(){
@@ -176,6 +176,13 @@ public class UIHud {
         GameManager.getInstance().lifeScore++;
         lifeLabel.setText("x" + GameManager.getInstance().lifeScore);
         incrementScore(300);
+    }
+
+    public void decrementLife(){
+        GameManager.getInstance().lifeScore--;
+        if(GameManager.getInstance().lifeScore >= 0){
+            lifeLabel.setText("x" + GameManager.getInstance().lifeScore);
+        }
     }
 
     public Stage getStage() {
