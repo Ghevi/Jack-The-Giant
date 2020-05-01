@@ -73,7 +73,9 @@ public class GameManager {
 
     public void playMusic(){
         if(music == null){
-            music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Nostale.mp3"));
+            music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Spinning Seal.mp3"));
+            music.setVolume(0.35f);
+            music.setLooping(true);
         }
 
         if(!music.isPlaying()){
